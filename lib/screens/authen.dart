@@ -10,7 +10,9 @@ class _AuthenState extends State<Authen> {
     return RaisedButton(
       color: Colors.orange[200],
       child: Text('Sign Up'),
-      onPressed: () {},
+      onPressed: () {
+        print('You Click Sign Up');
+      },
     );
   }
 
