@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' show get;
+import 'dart:convert';
 
 class Register extends StatefulWidget {
   @override
@@ -8,8 +10,9 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   // Explicit
   final formKey = GlobalKey<FormState>();
+  String name, user, password;
 
-  Widget uploadButton() {
+  Widget uploadButton(BuildContext context) {
     return IconButton(
       icon: Icon(
         Icons.cloud_upload,
@@ -17,12 +20,30 @@ class _RegisterState extends State<Register> {
       ),
       onPressed: () {
         print('You Click Upload');
+
+        // Check Validate
         if (formKey.currentState.validate()) {
-          
+          formKey.currentState.save();
+          uploadValueToServer(context);
         }
       },
     );
   }
+
+  void uploadValueToServer(BuildContext context)async{
+
+    String urlPHP = 'https://www.androidthai.in.th/tae/addDataTae.php?isAdd=true&Name=$name&User=$user&Password=$password';
+
+    var response = await get(urlPHP);
+    var result = json.decode(response.body);
+    print('result = $result');
+
+    if (result.toString() == 'true') {
+      Navigator.pop(context);
+    }
+
+  }
+
 
   Widget nameTextFromField() {
     return TextFormField(
@@ -41,8 +62,10 @@ class _RegisterState extends State<Register> {
       validator: (String value) {
         if (value.length == 0) {
           return 'Plase Fill Name in The Blank';
-          
         }
+      },
+      onSaved: (String value) {
+        name = value.trim();
       },
     );
   }
@@ -60,10 +83,14 @@ class _RegisterState extends State<Register> {
         helperText: 'Type User in the Blank',
         helperStyle:
             TextStyle(color: Colors.blue[400], fontStyle: FontStyle.italic),
-      ), validator: (String value){
+      ),
+      validator: (String value) {
         if (value.length == 0) {
           return 'Please Tyoe Your User Here !!';
         }
+      },
+      onSaved: (String value) {
+        user = value.trim();
       },
     );
   }
@@ -81,10 +108,14 @@ class _RegisterState extends State<Register> {
         helperText: 'Password More 6 Charator',
         helperStyle:
             TextStyle(color: Colors.red[400], fontStyle: FontStyle.italic),
-      ), validator: (String value){
-        if (value.length <=5) {
+      ),
+      validator: (String value) {
+        if (value.length <= 5) {
           return 'Please Type Password more 6 Charactor';
         }
+      },
+      onSaved: (String value) {
+        password = value.trim();
       },
     );
   }
@@ -96,7 +127,7 @@ class _RegisterState extends State<Register> {
       appBar: AppBar(
         backgroundColor: Colors.orange[700],
         title: Text('Register'),
-        actions: <Widget>[uploadButton()],
+        actions: <Widget>[uploadButton(context)],
       ),
       body: Form(
         key: formKey,
