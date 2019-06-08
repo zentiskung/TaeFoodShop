@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:taefoodshop/models/food_model.dart';
+import 'package:taefoodshop/screens/detail_food.dart';
 
 class FoodListView extends StatelessWidget {
   List<FoodModel> foodModels;
@@ -49,20 +50,34 @@ class FoodListView extends StatelessWidget {
     return ListView.builder(
       itemCount: foodModels.length,
       itemBuilder: (BuildContext context, int index) {
-        return Container(decoration: index % 2 == 0 ? BoxDecoration(color: Colors.orange[50]) : BoxDecoration(color: Colors.orange[100]),
-          child: Row(
-            children: <Widget>[
-              showImageFood(foodModels[index].imagePath.toString()),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    showName(foodModels[index].nameFood),
-                    showPrice(foodModels[index].price)
-                  ],
-                ),
-              )
-            ],
+        return GestureDetector(
+          child: Container(
+            decoration: index % 2 == 0
+                ? BoxDecoration(color: Colors.orange[50])
+                : BoxDecoration(color: Colors.orange[100]),
+            child: Row(
+              children: <Widget>[
+                showImageFood(foodModels[index].imagePath.toString()),
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      showName(foodModels[index].nameFood),
+                      showPrice(foodModels[index].price)
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
+          onTap: () {
+            print('You Click Position = $index');
+
+            var detailRoute = MaterialPageRoute(
+                builder: (BuildContext context) => DetailFood(
+                      foodModel: foodModels[index],
+                    ));
+                    Navigator.of(context).push(detailRoute);
+          },
         );
       },
     );
